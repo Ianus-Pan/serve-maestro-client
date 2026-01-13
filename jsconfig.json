@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "checkJs": true,
+        "target": "es2022",
+        "module": "es2022",
+        "types": [
+            "vue",
+            "node",
+            "vite/client"
+        ],
+        "moduleResolution": "nodenext",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ],
+            "@/components/*": [
+                "./src/components/*"
+            ],
+            "@/stores/*": [
+                "./src/stores/*"
+            ],
+            "@/composables/*": [
+                "./src/composables/*"
+            ]
+        }
+    },
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

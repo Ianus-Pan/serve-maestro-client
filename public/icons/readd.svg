@@ -1,0 +1,8 @@
+<svg id="Component_14_1" data-name="Component 14 – 1" xmlns="http://www.w3.org/2000/svg" width="31.176" height="34.625" viewBox="0 0 31.176 34.625">
+  <path id="Icon_simple-googleforms" data-name="Icon simple-googleforms" d="M20.891,8.372h8.372L20.891,0Zm0,1.014H19.876V0H7.194A2.282,2.282,0,0,0,4.91,2.283V31.2a2.282,2.282,0,0,0,2.283,2.283H26.98A2.282,2.282,0,0,0,29.262,31.2V9.386H20.891ZM11.379,24.163a1.143,1.143,0,1,1,1.144-1.143,1.143,1.143,0,0,1-1.144,1.143Zm0-4.567a1.143,1.143,0,1,1,1.1-1.142,1.143,1.143,0,0,1-1.1,1.142Zm0-4.565a1.143,1.143,0,1,1,1.144-1.143,1.143,1.143,0,0,1-1.144,1.143Zm12.557,8.942H14.424v-1.9h9.513Zm0-4.567H14.424V17.5h9.513Zm0-4.567H14.424v-1.9h9.513v1.9Z" transform="translate(-4.91)" fill="#46546b"/>
+  <circle id="Ellipse_20" data-name="Ellipse 20" cx="6.5" cy="6.5" r="6.5" transform="translate(18.176 21.625)" fill="#fff"/>
+  <g id="Icon_ion-reload-circle-outline" data-name="Icon ion-reload-circle-outline" transform="translate(9.454 13.508)">
+    <path id="Path_6664" data-name="Path 6664" d="M17.812,12.432l-.427-.5a3.885,3.885,0,1,0,.853,3.977" fill="none" stroke="#46546b" stroke-linecap="round" stroke-miterlimit="10" stroke-width="1.5"/>
+    <path id="Path_6665" data-name="Path 6665" d="M23.6,11.39a.317.317,0,0,0-.225.1l-2.238,2.238a.324.324,0,0,0,.229.553H23.6a.324.324,0,0,0,.324-.324V11.714a.324.324,0,0,0-.326-.324Z" transform="translate(-4.818 -0.306)" fill="#46546b" stroke="#46546b" stroke-width="0.07"/>
+  </g>
+</svg>
