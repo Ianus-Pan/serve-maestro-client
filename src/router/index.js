@@ -8,7 +8,15 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: '/map-2d'
+      redirect: '/arc-gis'
+    },
+    {
+      path: '/arc-gis',
+      name: 'arc-gis',
+      component: () => import('@/views/Map/MapArcGis.vue'),
+      meta: {
+        requiresAuth: false
+      }
     },
     {
       path: '/map-2d',

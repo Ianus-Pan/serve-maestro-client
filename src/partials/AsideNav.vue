@@ -24,15 +24,20 @@ const hasAssessment = computed(() => {
         <div class="flex flex-col items-center justify-between w-full">
             <div class="flex justify-center items-center flex-col w-full">
                 <NavGroup title="Operation Panel">
-                    <NavButton label="Map 2D" href="map-2d"
-                        description="View Case Map"
-                        :active="$route.name === 'map-2d'"
-                        img="/icons/map.svg" />
+                    <NavButton label="Arc GIS Map" href="arc-gis"
+                        description="View Arc GIS powered Case Map"
+                        :active="$route.name === 'arc-gis'"
+                        img="/icons/arcgis.png" />
 
-                    <NavButton label="Map 3D" href="map-3d"
-                        description="View 3D Map"
+                    <NavButton label="Leaflet Map" href="map-2d"
+                        description="View 2D Case Map"
+                        :active="$route.name === 'map-2d'"
+                        img="/icons/leaflet.png" />
+
+                    <NavButton label="Libre Map" href="map-3d"
+                        description="View 3D Case Map"
                         :active="$route.name === 'map-3d'"
-                        img="/icons/map.svg" />
+                        img="/icons/libremap.svg" />
 
                     <NavButton label="Assessment" href="assessment"
                         :description="(!hasCase || !hasThreat) ? 'Please select a Case & Threat first' : 

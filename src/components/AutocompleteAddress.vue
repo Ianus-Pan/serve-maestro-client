@@ -68,7 +68,7 @@ const onInput = async () => {
       const response = await axios.get(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
           query.value
-        )}.json?access_token=${import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}`
+        )}.json?access_token=${import.meta.env.VITE_MAPBOX_KEY}`
       )
       suggestions.value = response.data.features
       showSuggestions.value = true

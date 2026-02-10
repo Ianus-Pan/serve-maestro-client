@@ -40,14 +40,13 @@ async function logout() {
     clientSettings.wipeSettings()
 
     laravelServer.USER.LOGOUT.single()
-        .then(() => window.location.href = import.meta.env.VITE_MAESTRO_LOGIN)
         .catch(err => console.error('Logout Err:', err))
-        // .finally(() => {})
+        .finally(() => window.location.href = import.meta.env.VITE_MAESTRO_LOGIN)
 }
 const shownTabs = computed(() => {
     return {
-        cases: ["map-2d", "map-3d", "assessment", "scenario-session"].includes(route.name?.toString()),
-        insert: ["map-2d", "map-3d", ].includes(route.name?.toString()),
+        cases: ["arc-gis", "map-2d", "map-3d", "assessment", "scenario-session"].includes(route.name?.toString()),
+        insert: ["arc-gis", "map-2d", "map-3d" ].includes(route.name?.toString()),
         assessment: ["map-2d", "map-3d", "assessment"].includes(route.name?.toString())
     }
 })

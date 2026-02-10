@@ -80,7 +80,7 @@ const onInput = async () => {
       const response = await axios.get(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
           query.value
-        )}.json?access_token=${import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}`
+        )}.json?access_token=${import.meta.env.VITE_MAPBOX_KEY}`
       )
       suggestions.value = response.data.features
       showSuggestions.value = true
@@ -129,13 +129,13 @@ onMounted(() => {
   map.value = L.map('map-modal').setView(cLocation, 13)
 
   L.tileLayer(
-    `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${import.meta.env.VITE_MAPBOX_ACCESS_TOKEN}`,
+    `https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=${import.meta.env.VITE_MAPBOX_KEY}`,
     {
       maxZoom: 18,
       id: 'mapbox/streets-v11',
       tileSize: 512,
       zoomOffset: -1,
-      accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+      accessToken: import.meta.env.VITE_MAPBOX_KEY
     }
   ).addTo(map.value)
 

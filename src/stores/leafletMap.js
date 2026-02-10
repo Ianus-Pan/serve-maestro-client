@@ -21,12 +21,9 @@ import { MapElement, geo2leaf_geometry } from "@/classes/LeafletMapElement.js";
 
 import { useSrvCaseStore } from '@/stores/srvCase.js'
 
-import axiosInstance from '@/services/axiosInstance.js'
 import useNotifications from '@/composables/notifications.js';
 
-
 import useFSM from '@/composables/fsm.js';
-import useApi from '@/composables/api.js';
 import laravelServer from '@/api/laravelServer.js';
 
 const ROOT_URL = import.meta.env.VITE_MAESTRO_LARAVEL;
@@ -53,7 +50,6 @@ export const leafletMap = defineStore('leafletMap', () => {
 
     const loading = ref(false)
     const srvCaseStore = useSrvCaseStore()
-    const serveApi = useApi(axiosInstance)
 
     const notifications = useNotifications({ timeout: 5000 })
     function notify(payload) {
@@ -463,37 +459,53 @@ export const leafletMap = defineStore('leafletMap', () => {
         })
         elements.value.clear()
     }
+    
+    watch(
+        () => [
+            srvCaseStore.selectedSrvCase,   // On Case Change
+            srvCaseStore.loading.case,      // If not LOADING Cases
+            srvCaseStore.loading.elements   // & not LOADING Elements
+        ],
+        () => {
+            if (!isInitialized.value) return
+
+            if(srvCaseStore.loading.case && !srvCaseStore.loading.elements)
+                notify({ img: "/icons/case_dark.svg", title: "Case Changed", message: "Loaded new case map visualisation" })
+
+            // console.log(`CS: ${srvCaseStore.loading.case}, CES: ${srvCaseStore.loading.elements}`)
+
+            if (srvCaseStore.loading.case || srvCaseStore.loading.elements)
+                return loading.value = true
+            loading.value = false
+
+            // console.log('LEAFLET MAP:: localInsertFeatures: ', srvCaseStore.selectedSrvCaseElements.length)
+            localInsertFeatures(srvCaseStore.selectedSrvCaseElements)
+        }
+    )
+
 
     /**
      * The map is basically just an interactive visualisation of the case,
      * as soon as a case changes the map should reflect that
      * */
-    watch(() => srvCaseStore.selectedSrvCase, (after, before) => {
-        wipeElements()
-        notify({ img: "/icons/case_dark.svg", title: "Case Changed", message: "Loaded new case map visualisation" })
+    function localInsertFeatures(featureSet, wipe = false) {
+        if( wipe ) wipeElements()
 
-        loading.value = true
+        const features = [];
+        for (const element of featureSet) {
 
-        serveApi.get(`/serve/elements-by-case/${srvCaseStore.selectedSrvCase}`)
-            .then((value) => {
-                const features = [];
-                for (const element of value) {
+            const feature = {
+                _id: element._id,
+                type: "Feature",
+                geometry: element.geometry,
+                properties: element.properties
+            };
+            features.push(feature);
+        };
 
-                    const feature = {
-                        _id: element._id,
-                        type: "Feature",
-                        geometry: element.geometry,
-                        properties: element.properties
-                    };
-                    features.push(feature);
-
-                };
-                const featureCollection = { type: "FeatureCollection", features: features }
-                importGeoJson(featureCollection)
-            })
-            .catch((reason) => console.log(reason))
-            .finally(() => loading.value = false)
-    });
+        const featureCollection = { type: "FeatureCollection", features: features }
+        importGeoJson(featureCollection)
+    }
 
     /** @type {import('vue').ShallowRef<( L.Map | null )>}
      *  NOTE: https://stackoverflow.com/questions/65981712/uncaught-typeerror-this-map-is-null-vue-js-3-leaflet
@@ -527,7 +539,7 @@ export const leafletMap = defineStore('leafletMap', () => {
                     style_id: 'streets-v12',
                     tileSize: 512,
                     zoomOffset: -1,
-                    accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+                    accessToken: import.meta.env.VITE_MAPBOX_KEY
                 }
             )
 
@@ -540,7 +552,7 @@ export const leafletMap = defineStore('leafletMap', () => {
                     style_id: 'satellite-v9',
                     tileSize: 512,
                     zoomOffset: -1,
-                    accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+                    accessToken: import.meta.env.VITE_MAPBOX_KEY
                 }
             )
             const layer_nav_light = L.tileLayer(
@@ -552,7 +564,7 @@ export const leafletMap = defineStore('leafletMap', () => {
                     style_id: 'navigation-day-v1',
                     tileSize: 512,
                     zoomOffset: -1,
-                    accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+                    accessToken: import.meta.env.VITE_MAPBOX_KEY
                 }
             )
             const layer_nav_dark = L.tileLayer(
@@ -564,7 +576,7 @@ export const leafletMap = defineStore('leafletMap', () => {
                     style_id: 'navigation-night-v1',
                     tileSize: 512,
                     zoomOffset: -1,
-                    accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+                    accessToken: import.meta.env.VITE_MAPBOX_KEY
                 }
             )
             const layer_dark = L.tileLayer(
@@ -576,7 +588,7 @@ export const leafletMap = defineStore('leafletMap', () => {
                     style_id: 'dark-v11',
                     tileSize: 512,
                     zoomOffset: -1,
-                    accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+                    accessToken: import.meta.env.VITE_MAPBOX_KEY
                 }
             )
             const layer_light = L.tileLayer(
@@ -588,7 +600,7 @@ export const leafletMap = defineStore('leafletMap', () => {
                     style_id: 'light-v11',
                     tileSize: 512,
                     zoomOffset: -1,
-                    accessToken: import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+                    accessToken: import.meta.env.VITE_MAPBOX_KEY
                 }
             )
             // // SLOW
@@ -703,11 +715,11 @@ export const leafletMap = defineStore('leafletMap', () => {
                     }
 
                     const insertPopup = L.popup(
-                        { maxWidth: 500, minWidth: 200 }
-                    )
-                    .setLatLng(latlng)
-                    .setContent(_makeButtonsRawHTML(buttonData))
-                    .openOn(map.value)
+                            { maxWidth: 500, minWidth: 200 }
+                        )
+                        .setLatLng(latlng)
+                        .setContent(_makeButtonsRawHTML(buttonData))
+                        .openOn(map.value)
 
                     /**
                      * BUG: Doesnt register click event the second time
@@ -742,6 +754,7 @@ export const leafletMap = defineStore('leafletMap', () => {
             if (last_map_bounds.value) {
                 map.value.fitBounds(last_map_bounds.value)
             }
+            // console.log('> Leaflet Init - elements.value: ', elements.value.size)
             if (elements.value.size !== 0) {
                 for (const map_element of elements.value.values()) {
                     if (map_element.properties.element.active) {
@@ -749,6 +762,7 @@ export const leafletMap = defineStore('leafletMap', () => {
                     }
                 }
             } else {
+                localInsertFeatures(srvCaseStore.selectedSrvCaseElements)
                 // map.value.locate({ setView: true })
                 // console.log("No Elements in Case")
             }

@@ -39,12 +39,12 @@ export const useSrvCaseStore = defineStore('srvCase', () => {
      */
     function setSelectedSrvCase(id) {
         const existing_case = availableSrvCases.value.find(p => p._id === id);
+
         if (existing_case) {
             const case_id = existing_case._id
 
             /** Set Currently Selected CaseID */
             selectedSrvCase.value = case_id
-
             /** Save Selected CaseID for page refresh */
             clientSettings.data['selected_case'] = case_id
 
@@ -69,7 +69,6 @@ export const useSrvCaseStore = defineStore('srvCase', () => {
     async function promiseFetchSrvCases() {
         console.log('Promise Fetch Cases')
         loading.value.case = true
-        loading.value.elements = true
 
 
         return new Promise(resolve => {
@@ -78,7 +77,10 @@ export const useSrvCaseStore = defineStore('srvCase', () => {
 
                 let currentCID = clientSettings.data['selected_case']
                 if (currentCID) setSelectedSrvCase(currentCID)
-                if (currentCID) promiseFetchSrvCaseElement()
+                if (currentCID) {
+                    loading.value.elements = true
+                    promiseFetchSrvCaseElement()
+                }
 
                 resolve(availableSrvCases.value)
                     
@@ -114,7 +116,6 @@ export const useSrvCaseStore = defineStore('srvCase', () => {
                     };
                     features.push(feature);
                 };
-
                 selectedSrvCaseElements.value = features
             })
             .catch((err) => console.error('Fetch Element by Case', err))
@@ -299,6 +300,7 @@ export const useSrvCaseStore = defineStore('srvCase', () => {
         /** Server ADD/EDIT/REMOVE Element */
         elementPOST,
         elementDELETE,
+
         /** Local Import/Export GeoJSON */
         importGeoJson,
         exportGeoJson,

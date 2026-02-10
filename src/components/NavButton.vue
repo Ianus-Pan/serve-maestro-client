@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, PropType, ref } from 'vue';
+import { computed, onMounted, PropType, ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import router from '@/router';
 
@@ -59,6 +59,36 @@ const btnNavigate = (href) => {
     if( props.actionType ===  ActionType.Popup )
         return modalShow.value = true;
 };
+
+
+/**
+ * Dynamically import SVGs & update their dimensions instead of <img :src=`PATH`/> 
+ * Icons inside /src/ will be bundled inside the app to be used here
+ * Icons inside /public/ will be left as directory and served via <img src="local/path/icon.png"/>
+ */
+const svg = ref('')
+const img = ref('')
+const svgs = import.meta.glob('/src/icons/*.svg', {as: 'raw'})
+const loadIcon = async (img) => {
+    const loader = svgs[img]
+    return loader ? await loader() : null
+}
+
+onMounted(async () => {
+    if( props.actionType !== ActionType.Inertia ) {
+        svg.value = await loadIcon(`/src${props.img}`)
+        if( svg.value ) {
+            svg.value = svg.value
+                .replace(/width="[^"]*"/i, '')
+                .replace(/height="[^"]*"/i, '')
+                // .replace(/\s(width|height)=["'][^"']*["']/gi, '')
+                // .replace(/\sfill=["'](?!none)[^"']*["']/gi, '')
+                // .replace(/\sstroke=["'][^"']*["']/gi, '')
+        } else {
+            img.value = `/src${props.img}`
+        }
+    }
+})
 </script>
 
 <template>
@@ -79,7 +109,10 @@ const btnNavigate = (href) => {
         :class="classes"
         :disabled="props.disabled"
         v-tooltip.right="{ content : description }">
-        <img :class="props.imgClass" class="w-6 md:w-4 lg:w-6 h-6 md:h-4 lg:h-6" v-if="img" :src="img"
+        <img v-if="img" :src="img" :class="props.imgClass" class="w-6 md:w-4 lg:w-6 h-6 md:h-4 lg:h-6"
+            :style="props.disabled ? 'filter: invert(27%) sepia(88%) saturate(7193%) hue-rotate(358deg) brightness(75%) contrast(125%)' : ''"/>
+        
+        <div v-if="svg" v-html="svg" :class="props.imgClass" class="w-6 md:w-4 lg:w-6 h-6 md:h-4 lg:h-6"
             :style="props.disabled ? 'filter: invert(27%) sepia(88%) saturate(7193%) hue-rotate(358deg) brightness(75%) contrast(125%)' : ''"/>
         <span class="hidden md:inline text-xs lg:text-sm text-left text-ellipsis truncate uppercase">
             {{ label }}

@@ -160,6 +160,8 @@ export const useLibreMapStore = defineStore('libreMap', () => {
         Popup
       )
 
+      localInsertFeatures(srvCaseStore.selectedSrvCaseElements)
+
       loading.value = false
     })
 
@@ -640,11 +642,8 @@ export const useLibreMapStore = defineStore('libreMap', () => {
 
     return new Promise((resolve) => {
       requestAnimationFrame(() => {
-        console.log('> Terradraw Adding Features')
-        // console.log(
-        // 'Feature Insert Result',
+        // console.log('> Terradraw Adding Features')
         TerraDrawInstance.value.addFeatures(toimport)
-        // )
         resolve(null)
       })
     })
@@ -719,14 +718,21 @@ export const useLibreMapStore = defineStore('libreMap', () => {
   }
 
   watch(
-    () => [srvCaseStore.loading.case, srvCaseStore.loading.elements, loading.value],
+    () => [srvCaseStore.loading.case, srvCaseStore.loading.elements],
     () => {
       if (!isInitialized.value) return
 
-      // console.log(`CS: ${srvCaseStore.loading.case}, CES: ${srvCaseStore.loading.elements}, LMS: ${loading.value}`)
-      if (srvCaseStore.loading.case || srvCaseStore.loading.elements || loading.value) return
+      // if(srvCaseStore.loading.case && !srvCaseStore.loading.elements)
+      //     notify({ img: "/icons/case_dark.svg", title: "Case Changed", message: "Loaded new case map visualisation" })
+
+      console.log(`CS: ${srvCaseStore.loading.case}, CES: ${srvCaseStore.loading.elements}`)
+      
+      if (srvCaseStore.loading.case || srvCaseStore.loading.elements)
+          return loading.value = true
+      loading.value = false
 
       /** Import from API */
+      // console.log('LIBRE MAP:: localInsertFeatures: ', srvCaseStore.selectedSrvCaseElements.length)
       localInsertFeatures(srvCaseStore.selectedSrvCaseElements)
     }
   )

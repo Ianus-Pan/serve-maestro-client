@@ -31,7 +31,7 @@ L.Icon.Default.mergeOptions({
 })
 
 const defaultLocation = [34.668879, 33.028079]
-const mapBoxAccessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
+const mapBoxAccessToken = import.meta.env.VITE_MAPBOX_KEY
 
 let map
 const clickedLocation = ref({ lat: null, lng: null })
